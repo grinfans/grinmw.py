@@ -1,0 +1,4 @@
+requests
+eciespy
+coincurve
+Crypto
