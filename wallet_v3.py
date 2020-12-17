@@ -105,6 +105,7 @@ class WalletV3:
         resp = self.post('init_secure_api', {'ecdh_pubkey': pubkey})
         remote_pubkey = resp['result']['Ok']
         self.share_secret = PublicKey(bytes.fromhex(remote_pubkey)).multiply(self.key.secret).format().hex()[2:]
+        return self.share_secret
 
     # https://docs.rs/grin_wallet_api/4.0.0/grin_wallet_api/trait.OwnerRpc.html#tymethod.open_wallet
     def open_wallet(self, name, password):
@@ -114,6 +115,7 @@ class WalletV3:
             }
         resp = self.post_encrypted('open_wallet', params)
         self.token = resp['result']['Ok']
+        return self.token
 
     # https://docs.rs/grin_wallet_api/4.0.0/grin_wallet_api/trait.OwnerRpc.html#tymethod.node_height
     def node_height(self):
