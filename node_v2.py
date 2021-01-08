@@ -72,6 +72,10 @@ class NodeV2:
     def get_block(self, height=None, hash_=None, commit=None):
         resp = self.post('get_block', [height, hash_, commit], 'foreign')
         return resp["result"]["Ok"]
+    
+    def get_header(self, height=None, hash_=None, commit=None):
+        resp = self.post('get_header', [height, hash_, commit], 'foreign')
+        return resp["result"]["Ok"]
 
 if __name__ == '__main__':
     import pprint
@@ -90,8 +94,10 @@ if __name__ == '__main__':
 
     node = NodeV2( foreign_api_url, foreign_api_user, foreign_api_password, owner_api_url, owner_api_user, owner_api_password)
     pp.pprint(node.get_status())
-    pp.pprint(node.get_block(1036985))
-    pp.pprint(node.get_block(None, '00010b5eb1b657e0155ecc37bbde8ca574a7260112354c3439318a466dff475f'))
-    pp.pprint(node.get_block(None, None, '0852b0a613a1cf85752459af1e6ebd949d32648883cb32a8f6c3e55c0d0769eeea'))
+    #pp.pprint(node.get_block(1036985))
+    #pp.pprint(node.get_block(None, '00010b5eb1b657e0155ecc37bbde8ca574a7260112354c3439318a466dff475f'))
+    #pp.pprint(node.get_block(None, None, '0852b0a613a1cf85752459af1e6ebd949d32648883cb32a8f6c3e55c0d0769eeea'))
+
+    pp.pprint(node.get_header(1036985))
 
 
