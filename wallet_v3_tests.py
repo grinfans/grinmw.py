@@ -82,7 +82,7 @@ class TestOwnerApiV3Methods(unittest.TestCase):
         wallet = self.test_3_open_wallet()
         result = wallet.get_top_level_directory()
         self.assertIsNotNone(result, "Expected filesystem path string")
-        self.assertIsInstance(result, str, "Expected failsystem path key string")
+        self.assertIsInstance(result, str, "Expected filesystem path key string")
         exists = os.path.isdir(result)
         self.assertTrue(exists, "top_level_directory does not exist {result}")
 
