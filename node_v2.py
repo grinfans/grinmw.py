@@ -79,16 +79,19 @@ class NodeV2:
 
 if __name__ == '__main__':
     import pprint
+    from pathlib import Path
+    home = str(Path.home())
+
     pp = pprint.PrettyPrinter(indent=4)
     owner_api_url = 'http://localhost:3413/v2/owner'
     #change to your grin owner_api sercret file
-    owner_api_sercet_file = '/Users/yuanjieyang/.grin/main/.api_secret'
+    owner_api_sercet_file = os.path.join(home, '.grin/main/.api_secret')
     owner_api_user = 'grin'
     owner_api_password = open(owner_api_sercet_file).read().strip()
 
     foreign_api_url = 'http://localhost:3413/v2/foreign'
     #change to your grin owner_api sercret file
-    foreign_api_sercet_file = '/Users/yuanjieyang/.grin/main/.foreign_api_secret'
+    foreign_api_sercet_file = os.path.join(home, '.grin/main/.foreign_api_secret')
     foreign_api_user = 'grin'
     foreign_api_password = open(foreign_api_sercet_file).read().strip()
 
