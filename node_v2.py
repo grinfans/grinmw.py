@@ -64,7 +64,6 @@ class NodeV2:
             raise NodeError(method, params, None, response_json["result"]["Err"], api_type)
         return response_json
 
-    
     def get_status(self):
         resp = self.post('get_status', {}, 'owner')
         return resp["result"]["Ok"]
@@ -76,6 +75,14 @@ class NodeV2:
     def get_header(self, height=None, hash_=None, commit=None):
         resp = self.post('get_header', [height, hash_, commit], 'foreign')
         return resp["result"]["Ok"]
+
+     def get_kernel(self, kenerl, min_height=None, max_height=None):
+        '''
+        if kernel not found: {'id': 1, 'jsonrpc': '2.0', 'result': {'Err': 'NotFound'}}
+        return None
+        '''
+        resp = self.post('get_kernel', [kenerl, min_height, max_height], 'foreign')
+        return resp["result"].get("Ok")
 
 if __name__ == '__main__':
     import pprint
@@ -102,5 +109,6 @@ if __name__ == '__main__':
     #pp.pprint(node.get_block(None, None, '0852b0a613a1cf85752459af1e6ebd949d32648883cb32a8f6c3e55c0d0769eeea'))
 
     pp.pprint(node.get_header(1036985))
-
+    pp.pprint(node.get_kernel('096a7303ab9e3a68cf0b3d70d6ec61311efaf0f33f2ac251bff2a4da45908d3f15'))
+    pp.pprint(node.get_kernel('08f0a2b7e3ddd0ccc60ac147e93f3e8b01ede591d0da08ba93333e3c73fd45c1cf'))
 
