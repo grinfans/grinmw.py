@@ -8,8 +8,8 @@ setuptools.setup(
     description = 'Python wrappers around the Grin wallet V3 and Grin node V2 APIs',
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
-    author = '',
-    author_email = '',
+    author = 'xiaojay, Blade M. Doyle, marekyggdrasil',
+    author_email = 'xiaojay@gmail.com, bladedoyle@gmail.com, marek.yggdrasil@gmail.com',
     install_requires=['requests', 'eciespy', 'coincurve', 'Crypto'],
     url = 'https://github.com/grinfans/grinpy',
     classifiers=[
