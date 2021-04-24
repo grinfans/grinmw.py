@@ -53,7 +53,7 @@ Using the Wallet V3 API to access the locally running Grin wallet listener.
 ```python
 from grinmw.wallet_v3 import WalletV3
 
-import pprint
+import pprint, os
 
 pp = pprint.PrettyPrinter(indent=4)
 api_url = 'http://localhost:3420/v3/owner'
