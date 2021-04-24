@@ -1,4 +1,4 @@
-# grinpy
+# grinmw.py
 
 Grin is a privacy-preserving digital currency built openly by developers distributed all over the world. Check [grin.mw](https://grin.mw/) to know more!
 
@@ -10,7 +10,7 @@ This module provides Python wrappers for
 Install with
 
 ```
-pip install grinpy
+pip install grinmw
 ```
 
 If you need help please check how to reach our [community](https://grin.mw/community).
@@ -20,7 +20,7 @@ If you need help please check how to reach our [community](https://grin.mw/commu
 Using the Node V2 API to access the locally running Grin node.
 
 ```python
-from grinpy.node_v2 import NodeV2
+from grinmw.node_v2 import NodeV2
 
 import pprint
 from pathlib import Path
@@ -51,7 +51,7 @@ pp.pprint(node.get_kernel('08f0a2b7e3ddd0ccc60ac147e93f3e8b01ede591d0da08ba93333
 Using the Wallet V3 API to access the locally running Grin wallet listener.
 
 ```python
-from grinpy.wallet_v3 import WalletV3
+from grinmw.wallet_v3 import WalletV3
 
 import pprint
 
