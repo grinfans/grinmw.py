@@ -76,7 +76,7 @@ class NodeV2:
         resp = self.post('get_header', [height, hash_, commit], 'foreign')
         return resp["result"]["Ok"]
 
-     def get_kernel(self, kenerl, min_height=None, max_height=None):
+    def get_kernel(self, kenerl, min_height=None, max_height=None):
         '''
         if kernel not found: {'id': 1, 'jsonrpc': '2.0', 'result': {'Err': 'NotFound'}}
         return None
