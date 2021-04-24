@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='grinpy',
-    version='1.0.0',
+    version='0.1.0',
     packages=['grinpy',],
     license='MIT',
     description = 'Python wrappers around the Grin wallet V3 and Grin node V2 APIs',
