@@ -427,7 +427,7 @@ class WalletV3:
         return resp["result"]["Ok"]
 
     # https://docs.rs/grin_wallet_api/5.0.1/grin_wallet_api/trait.OwnerRpc.html#tymethod.create_wallet
-    def create_wallet(self, password, name=None, mnemonic=None, mnemonic_length=0):
+    def create_wallet(self, password, name=None, mnemonic=None, mnemonic_length=16):
         params = {
                 'password': password,
                 'name': name,
