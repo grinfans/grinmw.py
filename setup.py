@@ -12,6 +12,7 @@ setuptools.setup(
     author_email = 'xiaojay@gmail.com, bladedoyle@gmail.com, marek.yggdrasil@gmail.com',
     install_requires=['requests', 'eciespy', 'coincurve', 'Crypto'],
     url = 'https://github.com/grinfans/grinpy',
+    download_url = 'https://github.com/grinfans/grin.py/archive/refs/tags/v0.1.0.tar.gz',
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 2",
