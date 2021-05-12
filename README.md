@@ -92,3 +92,5 @@ send_args = {
 }
 print(wallet.init_send_tx(send_args))
 ```
+
+More examples in examples folder.
