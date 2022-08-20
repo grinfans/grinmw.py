@@ -114,23 +114,23 @@ send_args = {
 pp.pprint(wallet.init_send_tx(send_args))
 ```
 
-### Wallet Foreign V1
+### Wallet Foreign V2
 
-GRIN wallet foreign V1 API
+GRIN wallet foreign V2 API
 
 ```python
-from grinmw import WalletForeignV1
+from grinmw import WalletForeignV2
 
 import pprint, os
 
 pp = pprint.PrettyPrinter(indent=4)
-api_url = 'http://localhost:3420/v1/owner'
+api_url = 'http://localhost:3415/v2/foreign'
 
 # change to your grin owner_api sercret file
 api_sercet_file = '/home/ubuntu/.grin/main/.foreign_api_secret'
 api_user = 'grin'
 api_password = open(api_sercet_file).read().strip()
-wallet = WalletForeignV1(api_url, api_user, api_password)
+wallet = WalletForeignV2(api_url, api_user, api_password)
 
 pp.pprint(wallet.check_version())
 ```
