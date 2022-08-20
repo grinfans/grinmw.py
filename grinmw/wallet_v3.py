@@ -4,11 +4,12 @@
 #
 
 import os, requests, json
+import base64
+
 from requests.auth import HTTPBasicAuth
 from ecies.utils import generate_key
 from coincurve import PrivateKey, PublicKey
 from Crypto.Cipher import AES
-import base64
 
 def encrypt(key, msg, nonce):
     '''key hex string; msg string; nonce 12bit bytes'''
