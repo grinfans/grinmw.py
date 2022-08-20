@@ -1,13 +1,13 @@
 # Authors: xiaojay@gmail.com, Blade M. Doyle, Marek Narozniak
 #
-# Routines for working with Grin Wallet Foreign API V1
+# Routines for working with Grin Wallet Foreign API V2
 
 
 import os, requests, json
 
 from grinmw.wallet_v3 import WalletError
 
-class WalletForeignV1:
+class WalletForeignV2:
     def __init__(self, api_url, api_user, api_password):
         self.api_url = api_url
         self.api_user = api_user
