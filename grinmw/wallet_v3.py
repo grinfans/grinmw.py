@@ -432,7 +432,7 @@ class WalletV3:
                 'password': password,
                 'name': name,
                 'mnemonic': mnemonic,
-                'mnemonic_length=': mnemonic_length,
+                'mnemonic_length': mnemonic_length,
             }
         resp = self.post_encrypted('create_wallet', params)
         return resp["result"]["Ok"]
