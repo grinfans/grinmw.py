@@ -25,7 +25,6 @@ def decrypt(key, data, nonce):
     plaintext = aesCipher.decrypt(ciphertext)
     return plaintext.decode()
 
-
 # Exception class to hold wallet call error data
 class WalletError(Exception):
     def __init__(self, method, params, code, reason):
@@ -38,9 +37,7 @@ class WalletError(Exception):
     def __str__(self):
         return f'Callng {self.method} with params {self.params} failed with error code {self.code} because: {self.reason}'
 
-
-# Grin Wallet Owner API V3
-class WalletV3:
+class WalletV3Owner:
     def __init__(self, api_url, api_user, api_password):
         self.api_url = api_url
         self.api_user = api_user
@@ -437,7 +434,6 @@ class WalletV3:
         resp = self.post_encrypted('create_wallet', params)
         return resp["result"]["Ok"]
 
-# Grin Wallet Owner API V3
 class WalletV3Foreign:
     def __init__(self, api_url):
         self.api_url = api_url
@@ -464,37 +460,30 @@ class WalletV3Foreign:
             raise WalletError(method, params, None, response_json["result"]["Err"])
         return response_json
 
-    # https://docs.rs/grin_wallet_api/4.0.0/grin_wallet_api/struct.Foreign.html#method.set_tor_config
-    def set_tor_config(self, tor_config: dict):
-        resp = self.post('set_tor_config', {'tor_config': tor_config})
-        return resp['result']['Ok']
-
-    # https://docs.rs/grin_wallet_api/4.0.0/grin_wallet_api/struct.Foreign.html#method.check_version
+    # https://docs.rs/grin_wallet_api/latest/grin_wallet_api/trait.ForeignRpc.html#tymethod.check_version
     def check_version(self):
-        resp = self.post('check_version', {})
+        resp = self.post('check_version', [])
         return resp['result']['Ok']
 
-    # https://docs.rs/grin_wallet_api/4.0.0/grin_wallet_api/struct.Foreign.html#method.build_coinbase
-    def build_coinbase(self, block_fees: dict):
-        resp = self.post('build_coinbase', {'block_fees': block_fees})
+    # https://docs.rs/grin_wallet_api/latest/grin_wallet_api/trait.ForeignRpc.html#tymethod.build_coinbase
+    def build_coinbase(self, fees: int, height: int, key_id=None):
+        resp = self.post('build_coinbase', [
+            {
+                'fees': block_fees,
+                'height': height,
+                'key_id': key_id
+            }
+        ])
         return resp['result']['Ok']
 
-    # https://docs.rs/grin_wallet_api/4.0.0/grin_wallet_api/struct.Foreign.html#method.receive_tx
-    def receive_tx(self, slate: dict, dest_acct_name='', r_addr=''):
-        params = {'slate': slate}
-        if dest_acct_name != '':
-            params['dest_acct_name'] = dest_acct_name
-        if r_addr != '':
-            params['r_addr'] = r_addr
-        resp = self.post('receive_tx', params)
+    # https://docs.rs/grin_wallet_api/latest/grin_wallet_api/trait.ForeignRpc.html#tymethod.receive_tx
+    def receive_tx(self, slate: dict, dest_acct_name=None, r_addr=None):
+        resp = self.post('receive_tx', [slate, dest_acct_name, r_addr])
         return resp['result']['Ok']
 
-    # https://docs.rs/grin_wallet_api/4.0.0/grin_wallet_api/struct.Foreign.html#method.finalize_tx
-    def finalize_tx(self, slate: dict, post_automatically: bool):
-        resp = self.post('finalize_tx', {
-            'slate': slate,
-            'post_automatically': post_automatically
-        })
+    # https://docs.rs/grin_wallet_api/latest/grin_wallet_api/trait.ForeignRpc.html#tymethod.finalize_tx
+    def finalize_tx(self, slate: dict):
+        resp = self.post('finalize_tx', [slate])
         return resp['result']['Ok']
 
 
