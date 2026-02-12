@@ -436,3 +436,67 @@ class WalletV3:
             }
         resp = self.post_encrypted('create_wallet', params)
         return resp["result"]["Ok"]
+
+# Grin Wallet Owner API V3
+class WalletV3Foreign:
+    def __init__(self, api_url):
+        self.api_url = api_url
+
+    def post(self, method, params):
+        payload = {
+            'jsonrpc': '2.0',
+            'id': 1,
+            'method': method,
+            'params': params
+        }
+        response = requests.post(
+                self.api_url, json=payload)
+        if response.status_code >= 300 or response.status_code < 200:
+            # Requests-level error
+            raise WalletError(method, params, response.status_code, response.reason)
+        response_json = response.json()
+        if "error" in response_json:
+            # One version of a wallet error
+            raise WalletError(
+                method, params, response_json["error"]["code"], response_json["error"]["message"])
+        if "Err" in response_json:
+            # Another version of a wallet error
+            raise WalletError(method, params, None, response_json["result"]["Err"])
+        return response_json
+
+    # https://docs.rs/grin_wallet_api/4.0.0/grin_wallet_api/struct.Foreign.html#method.set_tor_config
+    def set_tor_config(self, tor_config: dict):
+        resp = self.post('set_tor_config', {'tor_config': tor_config})
+        return resp['result']['Ok']
+
+    # https://docs.rs/grin_wallet_api/4.0.0/grin_wallet_api/struct.Foreign.html#method.check_version
+    def check_version(self):
+        resp = self.post('check_version', {})
+        return resp['result']['Ok']
+
+    # https://docs.rs/grin_wallet_api/4.0.0/grin_wallet_api/struct.Foreign.html#method.build_coinbase
+    def build_coinbase(self, block_fees: dict):
+        resp = self.post('build_coinbase', {'block_fees': block_fees})
+        return resp['result']['Ok']
+
+    # https://docs.rs/grin_wallet_api/4.0.0/grin_wallet_api/struct.Foreign.html#method.receive_tx
+    def receive_tx(self, slate: dict, dest_acct_name='', r_addr=''):
+        params = {'slate': slate}
+        if dest_acct_name != '':
+            params['dest_acct_name'] = dest_acct_name
+        if r_addr != '':
+            params['r_addr'] = r_addr
+        resp = self.post('receive_tx', params)
+        return resp['result']['Ok']
+
+    # https://docs.rs/grin_wallet_api/4.0.0/grin_wallet_api/struct.Foreign.html#method.finalize_tx
+    def finalize_tx(self, slate: dict, post_automatically: bool):
+        resp = self.post('finalize_tx', {
+            'slate': slate,
+            'post_automatically': post_automatically
+        })
+        return resp['result']['Ok']
+
+
+
+
