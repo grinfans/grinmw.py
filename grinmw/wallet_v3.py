@@ -44,7 +44,7 @@ class WalletV3Owner:
         self.api_password = api_password
 
         self.key = generate_key()
-        self.share_secret = ''
+        self.shared_secret = ''
         self.token = ''
 
     def post(self, method, params):
@@ -77,14 +77,14 @@ class WalletV3Owner:
             'params': params
         }
         nonce = os.urandom(12)
-        encrypted = encrypt(self.share_secret, json.dumps(payload), nonce)
+        encrypted = encrypt(self.shared_secret, json.dumps(payload), nonce)
         resp = self.post('encrypted_request_v3', {
             'nonce': nonce.hex(),
             'body_enc': encrypted
         })
         nonce2 = bytes.fromhex(resp['result']['Ok']['nonce'])
         encrypted2 = resp['result']['Ok']['body_enc']
-        response_json = json.loads(decrypt(self.share_secret, encrypted2, nonce2))
+        response_json = json.loads(decrypt(self.shared_secret, encrypted2, nonce2))
         if "error" in response_json:
             # One version of a wallet error
             raise WalletError(method, params, response_json["error"]["code"], response_json["error"]["message"])
@@ -101,8 +101,8 @@ class WalletV3Owner:
         pubkey = self.key.public_key.format().hex()
         resp = self.post('init_secure_api', {'ecdh_pubkey': pubkey})
         remote_pubkey = resp['result']['Ok']
-        self.share_secret = PublicKey(bytes.fromhex(remote_pubkey)).multiply(self.key.secret).format().hex()[2:]
-        return self.share_secret
+        self.shared_secret = PublicKey(bytes.fromhex(remote_pubkey)).multiply(self.key.secret).format().hex()[2:]
+        return self.shared_secret
 
     # https://docs.rs/grin_wallet_api/5.0.1/grin_wallet_api/trait.OwnerRpc.html#tymethod.open_wallet
     def open_wallet(self, name, password):
@@ -131,7 +131,7 @@ class WalletV3Owner:
         resp = self.post_encrypted('retrieve_txs', params)
         if refresh and not resp["result"]["Ok"][0]:
             # We requested refresh but data was not successfully refreshed
-            raise WalletError("retrieve_outputs", params, None, "Failed to refresh data from the node")
+            raise WalletError("retrieve_txs", params, None, "Failed to refresh data from the node")
         return resp["result"]["Ok"][1]
 
     # https://docs.rs/grin_wallet_api/5.0.1/grin_wallet_api/trait.OwnerRpc.html#tymethod.retrieve_outputs
@@ -169,7 +169,7 @@ class WalletV3Owner:
                 'tx_slate_id': tx_slate_id,
             }
         resp = self.post_encrypted('cancel_tx', params)
-        return True
+        return resp["result"]["Ok"]
 
     # https://docs.rs/grin_wallet_api/5.0.1/grin_wallet_api/trait.OwnerRpc.html#tymethod.scan
     def scan(self, start_height=0, delete_unconfirmed=False):
@@ -179,7 +179,7 @@ class WalletV3Owner:
                 'delete_unconfirmed': delete_unconfirmed,
             }
         resp = self.post_encrypted('scan', params)
-        return True
+        return resp["result"]["Ok"]
 
     # https://docs.rs/grin_wallet_api/5.0.1/grin_wallet_api/trait.OwnerRpc.html#tymethod.finalize_tx
     def finalize_tx(self, slate):
@@ -226,7 +226,7 @@ class WalletV3Owner:
                 'fluff': fluff,
             }
         resp = self.post_encrypted('post_tx', params)
-        return True
+        return resp["result"]["Ok"]
 
     # https://docs.rs/grin_wallet_api/5.0.1/grin_wallet_api/trait.OwnerRpc.html#tymethod.process_invoice_tx
     def process_invoice_tx(self, slate, args):
@@ -245,7 +245,7 @@ class WalletV3Owner:
                 'slate': slate,
             }
         resp = self.post_encrypted('tx_lock_outputs', params)
-        return True
+        return resp["result"]["Ok"]
 
     # https://docs.rs/grin_wallet_api/5.0.1/grin_wallet_api/trait.OwnerRpc.html#tymethod.accounts
     def accounts(self):
@@ -263,7 +263,7 @@ class WalletV3Owner:
                 'new': new,
             }
         resp = self.post_encrypted('change_password', params)
-        return True
+        return resp["result"]["Ok"]
 
     # https://docs.rs/grin_wallet_api/5.0.1/grin_wallet_api/trait.OwnerRpc.html#tymethod.close_wallet
     def close_wallet(self, name=None):
@@ -271,7 +271,7 @@ class WalletV3Owner:
                 'name': name,
             }
         resp = self.post_encrypted('close_wallet', params)
-        return True
+        return resp["result"]["Ok"]
 
     # https://docs.rs/grin_wallet_api/5.0.1/grin_wallet_api/trait.OwnerRpc.html#tymethod.create_account_path
     def create_account_path(self, label):
@@ -291,7 +291,7 @@ class WalletV3Owner:
                 'tor_config': tor_config,
             }
         resp = self.post_encrypted('create_config', params)
-        return True
+        return resp["result"]["Ok"]
 
     # https://docs.rs/grin_wallet_api/5.0.1/grin_wallet_api/trait.OwnerRpc.html#tymethod.create_slatepack_message
     def create_slatepack_message(self, slate, recipients, sender_index=None):
@@ -310,7 +310,7 @@ class WalletV3Owner:
                 'name': name,
             }
         resp = self.post_encrypted('delete_wallet', params)
-        return True
+        return resp["result"]["Ok"]
 
     # https://docs.rs/grin_wallet_api/5.0.1/grin_wallet_api/trait.OwnerRpc.html#tymethod.get_mnemonic
     def get_mnemonic(self, password, name=None):
@@ -354,7 +354,7 @@ class WalletV3Owner:
         return resp["result"]["Ok"]
 
     # https://docs.rs/grin_wallet_api/5.0.1/grin_wallet_api/trait.OwnerRpc.html#tymethod.retrieve_payment_proof
-    def retrieve_payment_proof(self, refresh=True, tx_id=None, tx_slate_id=None):
+    def retrieve_payment_proof(self, refresh_from_node=True, tx_id=None, tx_slate_id=None):
         params = {
                 'token': self.token,
                 'refresh_from_node': refresh_from_node,
@@ -371,7 +371,7 @@ class WalletV3Owner:
                 'label': label,
             }
         resp = self.post_encrypted('set_active_account', params)
-        return True
+        return resp["result"]["Ok"]
 
     # https://docs.rs/grin_wallet_api/5.0.1/grin_wallet_api/trait.OwnerRpc.html#tymethod.set_top_level_directory
     def set_top_level_directory(self, dir):
@@ -379,7 +379,7 @@ class WalletV3Owner:
                 'dir': dir,
             }
         resp = self.post_encrypted('set_top_level_directory', params)
-        return True
+        return resp["result"]["Ok"]
 
     # https://docs.rs/grin_wallet_api/5.0.1/grin_wallet_api/trait.OwnerRpc.html#tymethod.set_tor_config
     def set_tor_config(self, tor_config=None):
@@ -387,7 +387,7 @@ class WalletV3Owner:
                 'tor_config': tor_config,
             }
         resp = self.post_encrypted('set_tor_config', params)
-        return True
+        return resp["result"]["Ok"]
 
     # https://docs.rs/grin_wallet_api/5.0.1/grin_wallet_api/trait.OwnerRpc.html#tymethod.slate_from_slatepack_message
     def slate_from_slatepack_message(self, message, secret_indices):
@@ -406,13 +406,13 @@ class WalletV3Owner:
                 'frequency': frequency,
             }
         resp = self.post_encrypted('start_updater', params)
-        return True
+        return resp["result"]["Ok"]
 
     # https://docs.rs/grin_wallet_api/5.0.1/grin_wallet_api/trait.OwnerRpc.html#tymethod.stop_updater
     def stop_updater(self):
         params = {}
         resp = self.post_encrypted('stop_updater', params)
-        return True
+        return resp["result"]["Ok"]
 
     # https://docs.rs/grin_wallet_api/5.0.1/grin_wallet_api/trait.OwnerRpc.html#tymethod.verify_payment_proof
     def verify_payment_proof(self, proof):
