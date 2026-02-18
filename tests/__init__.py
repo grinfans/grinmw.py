@@ -3,7 +3,7 @@ import base64
 import json
 import os
 
-from grinmw.wallet_v3 import encrypt, decrypt
+from grinmw.wallet import encrypt, decrypt
 
 def mocked_get(m, target_url, mocked_response, status_code=200):
     m.get(
