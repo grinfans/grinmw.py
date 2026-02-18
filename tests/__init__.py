@@ -54,7 +54,6 @@ def mock_post_key_exchange(
     expected_auth=('grin', 'password'),
     status_code=200
 ):
-    print('a')
     def matcher_and_capture(request):
         ok = True
 
@@ -65,7 +64,6 @@ def mock_post_key_exchange(
                 user, pw = decoded.split(':', 1)
                 ok = ok and (user == expected_auth[0] and pw == expected_auth[1])
             except Exception as e:
-                print(e)
                 ok = False
 
         print(ok)

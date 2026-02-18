@@ -20,17 +20,14 @@ class NodeError(Exception):
     def __str__(self):
         return f'Calling {self.api_type} api {self.method} with params {self.params} failed with error code {self.code} because: {self.reason}'
 
-class NodeV2:
-    def __init__(self, foreign_api_url, foreign_api_user, foreign_api_password, owner_api_url, owner_api_user, owner_api_password):
-        self.foreign_api_url = foreign_api_url
-        self.foreign_api_user = foreign_api_user
-        self.foreign_api_password = foreign_api_password
 
-        self.owner_api_url = owner_api_url
-        self.owner_api_user = owner_api_user
-        self.owner_api_password = owner_api_password
+class NodeV2Foreign:
+    def __init__(self, api_url, api_user, api_password):
+        self.api_url = api_url
+        self.api_user = api_user
+        self.api_password = api_password
 
-    def post(self, method, params, api_type):
+    def post(self, method, params):
         payload = {
             'jsonrpc': '2.0',
             'id': 1,
@@ -38,37 +35,33 @@ class NodeV2:
             'params': params
         }
 
-        if api_type == 'foreign':
-            response = requests.post(
-                    self.foreign_api_url, json=payload,
-                    auth=(self.foreign_api_user, self.foreign_api_password))
-        elif api_type == 'owner':
-            response = requests.post(
-                    self.owner_api_url, json=payload,
-                    auth=(self.owner_api_user, self.owner_api_password))
-        else:
-            pass
+        response = requests.post(
+            self.api_url, json=payload,
+            auth=(self.api_user, self.api_password))
 
         if response.status_code >= 300 or response.status_code < 200:
             # Requests-level error
             raise NodeError(method, params, response.status_code, response.reason, api_type)
         response_json = response.json()
 
+        return response_json
+
     # Foreign API methods
 
     # https://docs.rs/grin_api/latest/grin_api/foreign_rpc/trait.ForeignRpc.html#tymethod.get_block
     def get_block(self, height=None, hash_=None, commit=None):
-        resp = self.post('get_block', [height, hash_, commit], 'foreign')
+        resp = self.post('get_block', [height, hash_, commit])
         return resp["result"]["Ok"]
 
     # https://docs.rs/grin_api/latest/grin_api/foreign_rpc/trait.ForeignRpc.html#tymethod.get_header
     def get_header(self, height=None, hash_=None, commit=None):
-        resp = self.post('get_header', [height, hash_, commit], 'foreign')
+        resp = self.post('get_header', [height, hash_, commit])
         return resp["result"]["Ok"]
 
     # https://docs.rs/grin_api/latest/grin_api/foreign_rpc/trait.ForeignRpc.html#tymethod.get_blocks
-    def get_blocks(self):
-        pass # TODO
+    def get_blocks(self, start_height, end_height, max_, include_proof=False):
+        resp = self.post('get_blocks', [start_height, end_height, max_, include_proof])
+        return resp["result"]["Ok"]
 
     # https://docs.rs/grin_api/latest/grin_api/foreign_rpc/trait.ForeignRpc.html#tymethod.get_version
     def get_version(self):
@@ -114,6 +107,29 @@ class NodeV2:
     # https://docs.rs/grin_api/latest/grin_api/foreign_rpc/trait.ForeignRpc.html#tymethod.push_transaction
     def push_transaction(self):
         pass # TODO
+
+class NodeV2Owner:
+    def __init__(self, api_url, api_user, api_password):
+        self.api_url = api_url
+        self.api_user = api_user
+        self.api_password = api_password
+
+    def post(self, method, params, api_type):
+        payload = {
+            'jsonrpc': '2.0',
+            'id': 1,
+            'method': method,
+            'params': params
+        }
+
+        response = requests.post(
+            self.owner_api_url, json=payload,
+            auth=(self.api_user, self.api_password))
+
+        if response.status_code >= 300 or response.status_code < 200:
+            # Requests-level error
+            raise NodeError(method, params, response.status_code, response.reason, api_type)
+        response_json = response.json()
 
     # Owner API methods
 
