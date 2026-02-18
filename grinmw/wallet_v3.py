@@ -434,7 +434,7 @@ class WalletV3Owner:
         resp = self.post_encrypted('create_wallet', params)
         return resp["result"]["Ok"]
 
-class WalletV3Foreign:
+class WalletV2Foreign:
     def __init__(self, api_url):
         self.api_url = api_url
 
@@ -469,7 +469,7 @@ class WalletV3Foreign:
     def build_coinbase(self, fees: int, height: int, key_id=None):
         resp = self.post('build_coinbase', [
             {
-                'fees': block_fees,
+                'fees': fees,
                 'height': height,
                 'key_id': key_id
             }
