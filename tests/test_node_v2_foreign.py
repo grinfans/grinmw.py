@@ -910,4 +910,3 @@ class TestNodeForeignApiV2Methods(GrinAPITestClass):
 
             result = client_foreign.push_transaction(tx, fluff=fluff)
             assert result == mocked_response_result
-

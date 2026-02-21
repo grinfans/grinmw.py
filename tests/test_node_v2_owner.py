@@ -272,26 +272,23 @@ class TestNodeOwnerApiV2Methods(GrinAPITestClass):
 
     def test_ban_peer(self):
         with requests_mock.Mocker() as m:
-            node_url = 'http://localhost:3413/v2/owner'
-            node_user = 'grin'
-            node_password = 'password'
-            client_owner = NodeV2Owner(
-                node_url, node_user, node_password)
+            node_url = "http://localhost:3413/v2/owner"
+            node_user = "grin"
+            node_password = "password"
+            client_owner = NodeV2Owner(node_url, node_user, node_password)
 
-            peer_addr = '70.50.33.130:3414'
+            peer_addr = "70.50.33.130:3414"
             expected_request_body = {
-                'jsonrpc': '2.0',
-                'id': 1,
-                'method': 'ban_peer',
-                'params': [peer_addr]
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "ban_peer",
+                "params": [peer_addr],
             }
             mocked_response_result = None
             mocked_response = {
-	            "id": 1,
-	            "jsonrpc": "2.0",
-	            "result": {
-		            "Ok": mocked_response_result
-	            }
+                "id": 1,
+                "jsonrpc": "2.0",
+                "result": {"Ok": mocked_response_result},
             }
 
             mock_post(
@@ -300,34 +297,31 @@ class TestNodeOwnerApiV2Methods(GrinAPITestClass):
                 mocked_response,
                 expected_body=expected_request_body,
                 status_code=200,
-                expected_auth=(node_user, node_password))
+                expected_auth=(node_user, node_password),
+            )
 
             result = client_owner.ban_peer(peer_addr)
             assert result == mocked_response_result
 
-
     def test_unban_peer(self):
         with requests_mock.Mocker() as m:
-            node_url = 'http://localhost:3413/v2/owner'
-            node_user = 'grin'
-            node_password = 'password'
-            client_owner = NodeV2Owner(
-                node_url, node_user, node_password)
+            node_url = "http://localhost:3413/v2/owner"
+            node_user = "grin"
+            node_password = "password"
+            client_owner = NodeV2Owner(node_url, node_user, node_password)
 
-            peer_addr = '70.50.33.130:3414'
+            peer_addr = "70.50.33.130:3414"
             expected_request_body = {
-                'jsonrpc': '2.0',
-                'id': 1,
-                'method': 'unban_peer',
-                'params': [peer_addr]
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "unban_peer",
+                "params": [peer_addr],
             }
             mocked_response_result = None
             mocked_response = {
-	            "id": 1,
-	            "jsonrpc": "2.0",
-	            "result": {
-		            "Ok": mocked_response_result
-	            }
+                "id": 1,
+                "jsonrpc": "2.0",
+                "result": {"Ok": mocked_response_result},
             }
 
             mock_post(
@@ -336,7 +330,8 @@ class TestNodeOwnerApiV2Methods(GrinAPITestClass):
                 mocked_response,
                 expected_body=expected_request_body,
                 status_code=200,
-                expected_auth=(node_user, node_password))
+                expected_auth=(node_user, node_password),
+            )
 
             result = client_owner.unban_peer(peer_addr)
             assert result == mocked_response_result
