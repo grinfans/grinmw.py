@@ -4,6 +4,7 @@
 # https://github.com/mimblewimble/grin-rfcs/blob/master/text/0007-node-api-v2.md
 #
 
+from typing import List
 import os, requests, json
 from requests.auth import HTTPBasicAuth
 
@@ -65,11 +66,13 @@ class NodeV2Foreign:
 
     # https://docs.rs/grin_api/latest/grin_api/foreign_rpc/trait.ForeignRpc.html#tymethod.get_version
     def get_version(self):
-        pass # TODO
+        resp = self.post('get_version', [])
+        return resp["result"]["Ok"]
 
     # https://docs.rs/grin_api/latest/grin_api/foreign_rpc/trait.ForeignRpc.html#tymethod.get_tip
     def get_tip(self):
-        pass # TODO
+        resp = self.post('get_tip', [])
+        return resp["result"]["Ok"]
 
     # https://docs.rs/grin_api/latest/grin_api/foreign_rpc/trait.ForeignRpc.html#tymethod.get_kernel
     def get_kernel(self, kernel, min_height=None, max_height=None):
@@ -77,36 +80,51 @@ class NodeV2Foreign:
         if kernel not found: {'id': 1, 'jsonrpc': '2.0', 'result': {'Err': 'NotFound'}}
         return None
         '''
-        resp = self.post('get_kernel', [kernel, min_height, max_height], 'foreign')
+        resp = self.post('get_kernel', [kernel, min_height, max_height])
         return resp["result"].get("Ok")
 
     # https://docs.rs/grin_api/latest/grin_api/foreign_rpc/trait.ForeignRpc.html#tymethod.get_outputs
-    def get_outputs(self):
-        pass # TODO
+    def get_outputs(self, commits: List[str], start_height=None, end_height=None, include_proof=None, include_merkle_proof=None):
+        resp = self.post(
+            'get_outputs', [commits, start_height, end_height, include_proof, include_merkle_proof])
+        return resp["result"].get("Ok")
 
     # https://docs.rs/grin_api/latest/grin_api/foreign_rpc/trait.ForeignRpc.html#tymethod.get_unspent_outputs
-    def get_unspent_outputs(self):
-        pass # TODO
+    def get_unspent_outputs(self, start_index: int, max_: int, end_index=None, include_proof=False):
+        resp = self.post(
+            'get_unspent_outputs', [start_index, end_index, max_, include_proof])
+        return resp["result"].get("Ok")
+
 
     # https://docs.rs/grin_api/latest/grin_api/foreign_rpc/trait.ForeignRpc.html#tymethod.get_pmmr_indices
-    def get_pmmr_indices(self):
-        pass # TODO
+    def get_pmmr_indices(self, start_block_height: int, end_block_height=None):
+        resp = self.post(
+            'get_pmmr_indices', [start_block_height, end_block_height])
+        return resp["result"].get("Ok")
 
     # https://docs.rs/grin_api/latest/grin_api/foreign_rpc/trait.ForeignRpc.html#tymethod.get_pool_size
     def get_pool_size(self):
-        pass # TODO
+        resp = self.post(
+            'get_pool_size', [])
+        return resp["result"].get("Ok")
 
     # https://docs.rs/grin_api/latest/grin_api/foreign_rpc/trait.ForeignRpc.html#tymethod.get_stempool_size
     def get_stempool_size(self):
-        pass # TODO
+        resp = self.post(
+            'get_stempool_size', [])
+        return resp["result"].get("Ok")
 
     # https://docs.rs/grin_api/latest/grin_api/foreign_rpc/trait.ForeignRpc.html#tymethod.get_unconfirmed_transactions
-    def get_unconfirmed_transaction(self):
-        pass # TODO
+    def get_unconfirmed_transactions(self):
+        resp = self.post(
+            'get_unconfirmed_transactions', [])
+        return resp["result"].get("Ok")
 
     # https://docs.rs/grin_api/latest/grin_api/foreign_rpc/trait.ForeignRpc.html#tymethod.push_transaction
-    def push_transaction(self):
-        pass # TODO
+    def push_transaction(self, tx: dict, fluff=False):
+        resp = self.post(
+            'push_transaction', [tx, fluff])
+        return resp["result"].get("Ok")
 
 class NodeV2Owner:
     def __init__(self, api_url, api_user, api_password):
@@ -114,7 +132,7 @@ class NodeV2Owner:
         self.api_user = api_user
         self.api_password = api_password
 
-    def post(self, method, params, api_type):
+    def post(self, method, params):
         payload = {
             'jsonrpc': '2.0',
             'id': 1,
@@ -123,48 +141,69 @@ class NodeV2Owner:
         }
 
         response = requests.post(
-            self.owner_api_url, json=payload,
+            self.api_url, json=payload,
             auth=(self.api_user, self.api_password))
 
         if response.status_code >= 300 or response.status_code < 200:
             # Requests-level error
             raise NodeError(method, params, response.status_code, response.reason, api_type)
-        response_json = response.json()
+        return response.json()
 
     # Owner API methods
 
     # https://docs.rs/grin_api/latest/grin_api/owner_rpc/trait.OwnerRpc.html#tymethod.get_status
     def get_status(self):
-        pass
+        resp = self.post(
+            'get_status', [])
+        return resp["result"].get("Ok")
 
     # https://docs.rs/grin_api/latest/grin_api/owner_rpc/trait.OwnerRpc.html#tymethod.validate_chain
-    def validate_chain(self):
-        pass
+    def validate_chain(self, assume_valid_rangeproofs_kernels: bool):
+        resp = self.post(
+            'validate_chain', [assume_valid_rangeproofs_kernels])
+        return resp["result"].get("Ok")
 
     # https://docs.rs/grin_api/latest/grin_api/owner_rpc/trait.OwnerRpc.html#tymethod.compact_chain
     def compact_chain(self):
-        pass
+        resp = self.post(
+            'compact_chain', [])
+        return resp["result"].get("Ok")
 
     # https://docs.rs/grin_api/latest/grin_api/owner_rpc/trait.OwnerRpc.html#tymethod.reset_chain_head
-    def reset_chain_head(self):
-        pass
+    def reset_chain_head(self, hash_: str):
+        resp = self.post(
+            'reset_chain_head', [hash_])
+        return resp["result"].get("Ok")
 
     # https://docs.rs/grin_api/latest/grin_api/owner_rpc/trait.OwnerRpc.html#tymethod.invalidate_header
-    def invalidate_header(self):
-        pass
+    def invalidate_header(self, hash_: str):
+        resp = self.post(
+            'invalidate_header', [hash_])
+        return resp["result"].get("Ok")
 
     # https://docs.rs/grin_api/latest/grin_api/owner_rpc/trait.OwnerRpc.html#tymethod.get_peers
-    def get_peers(self):
-        pass
+    def get_peers(self, peer_addr=None):
+        params = []
+        if peer_addr is not None:
+            params.append(peer_addr)
+        resp = self.post(
+            'get_peers', params)
+        return resp["result"].get("Ok")
 
     # https://docs.rs/grin_api/latest/grin_api/owner_rpc/trait.OwnerRpc.html#tymethod.get_connected_peers
     def get_connected_peers(self):
-        pass
+        resp = self.post(
+            'get_connected_peers', [])
+        return resp["result"].get("Ok")
 
     # https://docs.rs/grin_api/latest/grin_api/owner_rpc/trait.OwnerRpc.html#tymethod.ban_peer
-    def ban_peer(self):
-        pass
+    def ban_peer(self, peer_addr: str):
+        resp = self.post(
+            'ban_peer', [peer_addr])
+        return resp["result"].get("Ok")
 
     # https://docs.rs/grin_api/latest/grin_api/owner_rpc/trait.OwnerRpc.html#tymethod.unban_peer
-    def unban_peer(self):
-        pass
+    def unban_peer(self, peer_addr: str):
+        resp = self.post(
+            'unban_peer', [peer_addr])
+        return resp["result"].get("Ok")

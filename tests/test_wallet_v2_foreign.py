@@ -225,36 +225,3 @@ class TestForeignApiV2Methods(GrinAPITestClass):
 
             result = client_foreign.finalize_tx(slate)
             assert result == mocked_response_result
-
-'''
-    def test_(self):
-        with requests_mock.Mocker() as m:
-            client_foreign = WalletV2Foreign(
-                'http://localhost:3415/v2/foreign')
-
-            expected_request_body = {
-                'jsonrpc': '2.0',
-                'id': 1,
-                'method': '',
-                'params': []
-            }
-            mocked_response_result = {}
-            mocked_response = {
-	            "id": 1,
-	            "jsonrpc": "2.0",
-	            "result": {
-		            "Ok": mocked_response_result
-	            }
-            }
-
-            mock_post(
-                m,
-                'http://localhost:3415/v2/foreign',
-                mocked_response,
-                expected_body=None,
-                status_code=200)
-
-            result = client_foreign.a()
-            assert result == mocked_response_result
-
-'''
